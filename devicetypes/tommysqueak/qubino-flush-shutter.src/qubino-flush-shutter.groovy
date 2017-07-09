@@ -40,6 +40,8 @@ metadata {
     command "calibrate"
     command "uncalibrate"
 
+    command "setSlatsLevel"
+
     attribute "destinationLevel", "number"
 
     fingerprint inClusters: "0x5E, 0x86, 0x72, 0x5A, 0x73, 0x20, 0x27, 0x25, 0x26, 0x32, 0x85, 0x8E, 0x59, 0x70", outClusters: "0x20, 0x26", model: "0052", prod: "0003"
@@ -74,9 +76,15 @@ metadata {
         attributeState("VALUE_DOWN", action: "close")
       }
     }
-    standardTile("preset", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset', action: "presetPosition", icon: "st.thermostat.thermostat-down"
+
+    standardTile("slats", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset - slats', action: "setSlatsLevel", icon: "st.Kids.kids15"
     }
+
+    standardTile("preset", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset', action: "presetPosition", icon: "st.Transportation.transportation13"
+    }
+
     standardTile("refresh", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
       state "default", label: '', action: "refresh", icon: "st.secondary.refresh"
     }
@@ -88,7 +96,11 @@ metadata {
     }
 
     main "toggle"
-    details(["toggle", "open", "close", "preset", "refresh", "calibrate"])
+    details(["toggle", "slats", "preset", "refresh", "calibrate"])
+  }
+
+  preferences {
+    input "slatsLevel", "number", title: "Slats Level", description: "Level for almost closed", range: "0..100", displayDuringSetup: false, defaultValue: 15
   }
 }
 
@@ -188,6 +200,11 @@ def unpause() {
   }
 }
 
+def setSlatsLevel() {
+  def configuredLevel = (slatsLevel ?: 15)
+  setLevel(configuredLevel)
+}
+
 //
 //	Commands for capability: Switch
 //
@@ -238,9 +255,9 @@ def setLevel(level) {
       sendEvent(name: "windowShade", value: "closing")
     }
 
-    if (level >= 95) {
+    if (level >= 98) {
       zwave.switchMultilevelV3.switchMultilevelSet(value: 0xFF).format()
-    } else if (level <= 5) {
+    } else if (level <= 2) {
       zwave.switchMultilevelV3.switchMultilevelSet(value: 0x00).format()
     } else {
       zwave.switchMultilevelV3.switchMultilevelSet(value: level).format()

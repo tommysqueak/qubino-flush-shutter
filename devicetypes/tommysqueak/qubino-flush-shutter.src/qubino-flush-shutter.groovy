@@ -263,6 +263,9 @@ def setLevel() {
 def setLevel(level) {
   log.trace "setLevel(level) {$level}"
 
+  //  z-wave max level can only be 99
+  if(level > 99) level = 99
+
   def currentLevel = currentDouble("level")
   sendEvent(name: "destinationLevel", value: level, displayed: false)
 

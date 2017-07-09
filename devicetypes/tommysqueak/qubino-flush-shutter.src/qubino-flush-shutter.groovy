@@ -274,11 +274,11 @@ def setLevel(level) {
     }
 
     if (level >= 98) {
-      zwave.switchMultilevelV3.switchMultilevelSet(value: 0xFF).format()
+      zwave.switchMultilevelV3.switchMultilevelSet(value: 0xFF, dimmingDuration: 0x00).format()
     } else if (level <= 2) {
-      zwave.switchMultilevelV3.switchMultilevelSet(value: 0x00).format()
+      zwave.switchMultilevelV3.switchMultilevelSet(value: 0x00, dimmingDuration: 0x00).format()
     } else {
-      zwave.switchMultilevelV3.switchMultilevelSet(value: level).format()
+      zwave.switchMultilevelV3.switchMultilevelSet(value: level, dimmingDuration: 0x00).format()
     }
   }
 }

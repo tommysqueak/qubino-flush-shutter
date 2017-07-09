@@ -40,7 +40,9 @@ metadata {
     command "calibrate"
     command "uncalibrate"
 
-    command "setSlatsLevel"
+    command "setCustomLevel1"
+    command "setCustomLevel2"
+    command "setCustomLevel3"
 
     attribute "destinationLevel", "number"
 
@@ -78,11 +80,16 @@ metadata {
     }
 
     standardTile("slats", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - slats', action: "setSlatsLevel", icon: "st.Kids.kids15"
+      state "default", label: 'preset - slats', action: "presetPosition", icon: "st.Kids.kids15"
     }
-
-    standardTile("preset", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset', action: "presetPosition", icon: "st.Transportation.transportation13"
+    standardTile("custom1", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset - 1', action: "setCustomLevel1", icon: "st.Kids.kids15"
+    }
+    standardTile("custom2", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset - 2', action: "setCustomLevel2", icon: "st.Kids.kids15"
+    }
+    standardTile("custom3", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset - 3', action: "setCustomLevel3", icon: "st.Kids.kids15"
     }
 
     standardTile("refresh", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
@@ -96,11 +103,14 @@ metadata {
     }
 
     main "toggle"
-    details(["toggle", "slats", "preset", "refresh", "calibrate"])
+    details(["toggle", "slats", "custom1", "custom2", "custom3", "refresh", "calibrate"])
   }
 
   preferences {
     input "slatsLevel", "number", title: "Slats Level", description: "Level for almost closed", range: "0..100", displayDuringSetup: false, defaultValue: 15
+    input "customLevel1", "number", title: "Quick Level 1", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 25
+    input "customLevel2", "number", title: "Quick Level 2", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 50
+    input "customLevel3", "number", title: "Quick Level 3", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 75
   }
 }
 
@@ -200,9 +210,16 @@ def unpause() {
   }
 }
 
-def setSlatsLevel() {
-  def configuredLevel = (slatsLevel ?: 15)
-  setLevel(configuredLevel)
+def setCustomLevel1() {
+  setLevel(customLevel1 ?: 25)
+}
+
+def setCustomLevel2() {
+  setLevel(customLevel2 ?: 50)
+}
+
+def setCustomLevel3() {
+  setLevel(customLevel3 ?: 75)
 }
 
 //
@@ -231,7 +248,8 @@ def close() {
 
 def presetPosition() {
   log.debug "Executing 'presetPosition'"
-  setLevel(50)
+  def configuredLevel = (slatsLevel ?: 15)
+  setLevel(configuredLevel)
 }
 
 //

@@ -17,6 +17,7 @@
 //  Sources of inspiration
 //  https://github.com/A5HRAJ/SmartThings/blob/master/somfy_shades.groovy
 //  https://community.smartthings.com/t/fibaro-fgrm-222-roller-shutter/5804/49
+//  https://github.com/kjamsek/SmartThings/blob/master/DeviceHandlers/Qubino/FlushShutter/QubinoFlushShutterDeviceHandler.groovy
 
 metadata {
   definition(name: "Qubino Flush Shutter", namespace: "tommysqueak", author: "Tom Philip") {
@@ -45,6 +46,10 @@ metadata {
     command "setCustomLevel3"
 
     attribute "destinationLevel", "number"
+    attribute "customLevel1Display", "number"
+    attribute "customLevel2Display", "number"
+    attribute "customLevel3Display", "number"
+
 
     fingerprint inClusters: "0x5E, 0x86, 0x72, 0x5A, 0x73, 0x20, 0x27, 0x25, 0x26, 0x32, 0x85, 0x8E, 0x59, 0x70", outClusters: "0x20, 0x26", model: "0052", prod: "0003"
     // zw:L type:1107 mfr:0159 prod:0003 model:0052 ver:1.01 zwv:4.05 lib:03 cc:5E,86,72,5A,73,20,27,25,26,32,85,8E,59,70 ccOut:20,26 role:05 ff:9A00 ui:9A00
@@ -82,14 +87,14 @@ metadata {
     standardTile("slats", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
       state "default", label: 'preset - slats', action: "presetPosition", icon: "st.Kids.kids15"
     }
-    standardTile("custom1", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - 1', action: "setCustomLevel1", icon: "st.Kids.kids15"
+    standardTile("custom1", "device.customLevel1Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel1", icon: "st.Kids.kids15"
     }
-    standardTile("custom2", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - 2', action: "setCustomLevel2", icon: "st.Kids.kids15"
+    standardTile("custom2", "device.customLevel2Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel1", icon: "st.Kids.kids15"
     }
-    standardTile("custom3", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - 3', action: "setCustomLevel3", icon: "st.Kids.kids15"
+    standardTile("custom3", "device.customLevel3Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
+      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel1", icon: "st.Kids.kids15"
     }
 
     standardTile("refresh", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
@@ -108,9 +113,9 @@ metadata {
 
   preferences {
     input "slatsLevel", "number", title: "Slats Level", description: "Level for almost closed", range: "0..100", displayDuringSetup: false, defaultValue: 15
-    input "customLevel1", "number", title: "Quick Level 1", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 25
-    input "customLevel2", "number", title: "Quick Level 2", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 50
-    input "customLevel3", "number", title: "Quick Level 3", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 75
+    input "customLevel1", "number", title: "Preset Level 1", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 25
+    input "customLevel2", "number", title: "Preset Level 2", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 50
+    input "customLevel3", "number", title: "Preset Level 3", description: "Set the level quickly", range: "0..100", displayDuringSetup: false, defaultValue: 75
   }
 }
 
@@ -178,11 +183,7 @@ def refresh() {
   log.trace "refresh()"
 
   delayBetween([
-    //zwave.switchBinaryV1.switchBinaryGet().format(),
     zwave.switchMultilevelV1.switchMultilevelGet().format(),
-    //zwave.meterV2.meterGet(scale: 0).format(),      // get kWh
-    //zwave.meterV2.meterGet(scale: 2).format(),      // get Watts
-    //zwave.basicV1.basicGet().format(),
   ], 3000)
 }
 
@@ -286,6 +287,10 @@ def setLevel(level) {
   }
 }
 
+def installed() {
+  configure()
+}
+
 def updated() {
   configure()
 }
@@ -293,10 +298,15 @@ def updated() {
 def configure() {
   log.debug("configure")
 
+  //  Grab the values from the preferences, so that we can display them in the ui.
+  //  preference themselves can't be shown in the ui/tiles :(
+  sendEvent(name: "customLevel1Display", value: (customLevel1 ?: 25), displayed: false)
+  sendEvent(name: "customLevel2Display", value: (customLevel2 ?: 50), displayed: false)
+  sendEvent(name: "customLevel3Display", value: (customLevel3 ?: 75), displayed: false)
+
   delayBetween([
-    //	Turn off watt reporting (by wattage)
+    //	Turn off energy reporting - by wattage (40) and by time (42), as it's not useful info.
     zwave.configurationV1.configurationSet(parameterNumber: 40, size: 1, scaledConfigurationValue: 0).format(),
-    //	Turn off watt reporting (by time)
     zwave.configurationV1.configurationSet(parameterNumber: 42, size: 2, scaledConfigurationValue: 0).format(),
   ], 3000)
 }

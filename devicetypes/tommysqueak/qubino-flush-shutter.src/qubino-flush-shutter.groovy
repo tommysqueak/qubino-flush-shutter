@@ -91,10 +91,10 @@ metadata {
       state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel1", icon: "st.Kids.kids15"
     }
     standardTile("custom2", "device.customLevel2Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel1", icon: "st.Kids.kids15"
+      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel2", icon: "st.Kids.kids15"
     }
     standardTile("custom3", "device.customLevel3Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel1", icon: "st.Kids.kids15"
+      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel3", icon: "st.Kids.kids15"
     }
 
     standardTile("refresh", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {

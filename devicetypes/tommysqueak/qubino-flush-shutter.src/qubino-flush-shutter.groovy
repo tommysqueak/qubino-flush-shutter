@@ -134,12 +134,12 @@ def parse(String description) {
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv3.SwitchMultilevelReport cmd) {
-  storeState(cmd.value)
+  return storeState(cmd.value)
 }
 
 //	Very occasionally we don't get SwitchMultilevelReport, but we get a BasicReport. So this is our back-up.
 def zwaveEvent(physicalgraph.zwave.commands.basicv1.BasicReport cmd) {
-  storeState(cmd.value)
+  return storeState(cmd.value)
 }
 
 def storeState(level) {
@@ -262,18 +262,23 @@ def setLevel() {
 }
 
 def setLevel(level) {
-  log.trace "setLevel(level) {$level}"
+  log.trace "setLevel(level): {$level}"
+
+  level = level as Integer
 
   //  z-wave max level can only be 99
   if(level > 99) level = 99
 
   def currentLevel = currentDouble("level")
+  log.trace "currentLevel: {$currentLevel}"
   sendEvent(name: "destinationLevel", value: level, displayed: false)
 
   if (level != null) {
     if (level > currentLevel) {
+      log.trace "windowShade: opening"
       sendEvent(name: "windowShade", value: "opening")
     } else if (level < currentLevel) {
+      log.trace "windowShade: closing"
       sendEvent(name: "windowShade", value: "closing")
     }
 
@@ -284,6 +289,9 @@ def setLevel(level) {
     } else {
       zwave.switchMultilevelV3.switchMultilevelSet(value: level, dimmingDuration: 0x00).format()
     }
+  }
+  else {
+    log.trace "Uh oh: level is null :/"
   }
 }
 

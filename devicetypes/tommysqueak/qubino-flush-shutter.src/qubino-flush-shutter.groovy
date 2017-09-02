@@ -1,5 +1,7 @@
 /**
- *  Qubino Flush Shutter v2
+ *  Qubino Flush Shutter
+ *
+ *  https://github.com/tommysqueak/qubino-flush-shutter
  *
  *  Copyright 2016 Tom Philip
  *

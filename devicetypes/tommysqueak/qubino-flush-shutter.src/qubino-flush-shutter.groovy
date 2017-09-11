@@ -73,11 +73,11 @@ metadata {
     multiAttributeTile(name: "toggle", type: "generic", width: 6, height: 4, canChangeIcon: false) {
       tileAttribute("device.windowShade", key: "PRIMARY_CONTROL") {
         attributeState("unknown", label: '-', action: "refresh", icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e")
-        attributeState("closed", label: '${name}', action: "open", icon: "st.doors.garage.garage-closed", backgroundColor: "#bbbbdd", nextState: "opening")
-        attributeState("open", label: '${name}', action: "close", icon: "st.doors.garage.garage-open", backgroundColor: "#ffcc33", nextState: "closing")
+        attributeState("closed", label: '${name}', action: "open", icon: "st.doors.garage.garage-closed", backgroundColor: "#ffffff", nextState: "opening")
+        attributeState("open", label: '${name}', action: "close", icon: "st.doors.garage.garage-open", backgroundColor: "#79b821", nextState: "closing")
         attributeState("partially open", label: 'partial', action: "unpause", icon: "st.doors.garage.garage-open", backgroundColor: "#ffcc33")
-        attributeState("closing", label: '${name}', action: "pause", icon: "st.doors.garage.garage-closing", backgroundColor: "#bbbbdd", nextState: "partially open")
-        attributeState("opening", label: '${name}', action: "pause", icon: "st.doors.garage.garage-opening", backgroundColor: "#ffcc33", nextState: "partially open")
+        attributeState("closing", label: '${name}', action: "pause", icon: "st.doors.garage.garage-closing", backgroundColor: "#ffa81e", nextState: "partially open")
+        attributeState("opening", label: '${name}', action: "pause", icon: "st.doors.garage.garage-opening", backgroundColor: "#ffa81e", nextState: "partially open")
       }
 
       tileAttribute("device.level", key: "VALUE_CONTROL") {

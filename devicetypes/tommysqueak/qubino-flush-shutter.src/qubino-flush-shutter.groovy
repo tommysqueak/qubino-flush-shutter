@@ -3,7 +3,7 @@
  *
  *  https://github.com/tommysqueak/qubino-flush-shutter
  *
- *  Copyright 2016 Tom Philip
+ *  Copyright 2018 Tom Philip
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -47,7 +47,7 @@ metadata {
     command "setCustomLevel2"
     command "setCustomLevel3"
 
-    attribute "destinationLevel", "number"
+    attribute "positionalState", "string"
     attribute "customLevel1Display", "number"
     attribute "customLevel2Display", "number"
     attribute "customLevel3Display", "number"
@@ -71,7 +71,7 @@ metadata {
 
   tiles(scale: 2) {
     multiAttributeTile(name: "toggle", type: "generic", width: 6, height: 4, canChangeIcon: false) {
-      tileAttribute("device.windowShade", key: "PRIMARY_CONTROL") {
+      tileAttribute("device.positionalState", key: "PRIMARY_CONTROL") {
         attributeState("unknown", label: '-', action: "refresh", icon: "st.doors.garage.garage-open", backgroundColor: "#e86d13")
         attributeState("closed", label: '${name}', action: "open", icon: "st.doors.garage.garage-closed", backgroundColor: "#ffffff", nextState: "opening")
         attributeState("open", label: '${name}', action: "close", icon: "st.doors.garage.garage-open", backgroundColor: "#00a0dc", nextState: "closing")
@@ -151,6 +151,7 @@ def storeState(level) {
   if (level == 0) {
     result << createEvent(name: "switch", value: "off")
     result << createEvent(name: "windowShade", value: "closed")
+    result << createEvent(name: "positionalState", value: "closed", displayed: false)
     log.debug "Reported state is closed; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
   } else if (level > 98) {
     //	normally only opens to 99%, so make/fudge it 100%
@@ -158,6 +159,7 @@ def storeState(level) {
     level = 100
     result << createEvent(name: "switch", value: "on")
     result << createEvent(name: "windowShade", value: "open")
+    result << createEvent(name: "positionalState", value: "open", displayed: false)
     log.debug "Reported state is open; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
   } else {
     result << createEvent(name: "switch", value: "default")
@@ -165,6 +167,14 @@ def storeState(level) {
     //	as we receive this event about 2 seconds after calling close()
     result << createEvent(name: "windowShade", value: "partially open")
     log.debug "Reported state is neither open or closed; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
+
+    def currentLevel = currentDouble("level")
+    if (level > currentLevel) {
+      result << createEvent(name: "positionalState", value: "partially open", displayed: false)
+    }
+    else {
+      result << createEvent(name: "positionalState", value: "partially open", displayed: false)
+    }
   }
   result << createEvent(name: "level", value: level, unit: "%")
 
@@ -204,12 +214,17 @@ def pause() {
 }
 
 def unpause() {
-  //	Before it was paused, what level was it trying to get to.
-  def originalDestinationLevel = currentDouble("destinationLevel")
-  def currentLevel = currentDouble("level")
+  //	Before it was paused, what positionalState was it going in?
+  def whereItsAt = device.currentValue("positionalState")
 
-  if (originalDestinationLevel != currentLevel) {
-    setLevel(originalDestinationLevel)
+  // closed, opening,
+  // closing, open, partially open, unknown
+
+  if(whereItsAt == "opening" || whereItsAt == "closed") {
+    open()
+  }
+  else {
+    close()
   }
 }
 
@@ -273,15 +288,16 @@ def setLevel(level) {
 
   def currentLevel = currentDouble("level")
   log.trace "currentLevel: {$currentLevel}"
-  sendEvent(name: "destinationLevel", value: level, displayed: false)
 
   if (level != null) {
     if (level > currentLevel) {
       log.trace "windowShade: opening"
       sendEvent(name: "windowShade", value: "opening")
+      sendEvent(name: "positionalState", value: "opening", displayed: false)
     } else if (level < currentLevel) {
       log.trace "windowShade: closing"
       sendEvent(name: "windowShade", value: "closing")
+      sendEvent(name: "positionalState", value: "closing", displayed: false)
     }
 
     if (level >= 98) {

@@ -75,8 +75,8 @@ metadata {
         attributeState("unknown", label: '-', action: "refresh", icon: "st.doors.garage.garage-open", backgroundColor: "#e86d13")
         attributeState("closed", label: '${name}', action: "open", icon: "st.doors.garage.garage-closed", backgroundColor: "#ffffff", nextState: "opening")
         attributeState("open", label: '${name}', action: "close", icon: "st.doors.garage.garage-open", backgroundColor: "#00a0dc", nextState: "closing")
-        attributeState("partially open - opening", label: 'partial - opening', action: "unpause", icon: "st.doors.garage.garage-open", backgroundColor: "#69c0e0", nextState: "opening")
-        attributeState("partially open - closing", label: 'partial - closing', action: "unpause", icon: "st.doors.garage.garage-open", backgroundColor: "#69c0e0", nextState: "closing")
+        attributeState("partially open - opening", label: 'partial ↑', action: "unpause", icon: "st.doors.garage.garage-open", backgroundColor: "#69c0e0", nextState: "opening")
+        attributeState("partially open - closing", label: 'partial ↓', action: "unpause", icon: "st.doors.garage.garage-open", backgroundColor: "#69c0e0", nextState: "closing")
         attributeState("closing", label: '${name}', action: "pause", icon: "st.doors.garage.garage-closing", backgroundColor: "#68c1e2", nextState: "partially open - closing")
         attributeState("opening", label: '${name}', action: "pause", icon: "st.doors.garage.garage-opening", backgroundColor: "#68c1e2", nextState: "partially open - opening")
       }

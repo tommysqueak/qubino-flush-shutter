@@ -3,7 +3,7 @@
  *
  *  https://github.com/tommysqueak/qubino-flush-shutter
  *
- *  Copyright 2016 Tom Philip
+ *  Copyright 2020 Tom Philip
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -53,6 +53,7 @@ metadata {
     attribute "customLevel3Display", "number"
 
 
+    fingerprint mfr:"0159", prod:"0003", model:"0052"  //Manufacturer Information value for Qubino Flush Shutter
     fingerprint inClusters: "0x5E, 0x86, 0x72, 0x5A, 0x73, 0x20, 0x27, 0x25, 0x26, 0x32, 0x85, 0x8E, 0x59, 0x70", outClusters: "0x20, 0x26", model: "0052", prod: "0003"
     // zw:L type:1107 mfr:0159 prod:0003 model:0052 ver:1.01 zwv:4.05 lib:03 cc:5E,86,72,5A,73,20,27,25,26,32,85,8E,59,70 ccOut:20,26 role:05 ff:9A00 ui:9A00
 
@@ -172,7 +173,7 @@ def storeState(level) {
     def currentLevel = currentDouble("level")
     if (level > currentLevel) {
       result << createEvent(name: "positionalState", value: "partially open - opening", displayed: false)
-  }
+    }
     else {
       result << createEvent(name: "positionalState", value: "partially open - closing", displayed: false)
     }
@@ -302,7 +303,7 @@ def setLevel(level) {
     }
 
     if (level >= 98) {
-      zwave.switchMultilevelV3.switchMultilevelSet(value: 0xFF, dimmingDuration: 0x00).format()
+      zwave.switchMultilevelV3.switchMultilevelSet(value: 99, dimmingDuration: 0x00).format()
     } else if (level <= 2) {
       zwave.switchMultilevelV3.switchMultilevelSet(value: 0x00, dimmingDuration: 0x00).format()
     } else {

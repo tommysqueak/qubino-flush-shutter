@@ -38,6 +38,7 @@ metadata {
 
     //	Secure inclusion. How? Does the Software version of qubino support it?
 
+    command "presetPosition"
     command "pause"
     command "unpause"
     command "calibrate"

@@ -152,7 +152,7 @@ def storeState(level) {
   log.trace "SwitchMultilevelReport cmd.value:  ${level}"
 
   if (level == 0) {
-    result << createEvent(name: "switch", value: "off")
+    result << createEvent(name: "switch", value: "off", displayed: false)
     result << createEvent(name: "windowShade", value: "closed")
     result << createEvent(name: "positionalState", value: "closed", displayed: false)
     log.debug "Reported state is closed; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
@@ -160,7 +160,7 @@ def storeState(level) {
     //	normally only opens to 99%, so make/fudge it 100%
     //  TODO: put up a recalibrate notice
     level = 100
-    result << createEvent(name: "switch", value: "on")
+    result << createEvent(name: "switch", value: "on", displayed: false)
     result << createEvent(name: "windowShade", value: "open")
     result << createEvent(name: "positionalState", value: "open", displayed: false)
     log.debug "Reported state is open; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "

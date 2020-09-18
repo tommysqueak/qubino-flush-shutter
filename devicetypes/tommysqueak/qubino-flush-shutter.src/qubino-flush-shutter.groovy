@@ -22,9 +22,11 @@
 //  https://github.com/kjamsek/SmartThings/blob/master/DeviceHandlers/Qubino/FlushShutter/QubinoFlushShutterDeviceHandler.groovy
 
 metadata {
-  definition(name: "Qubino Flush Shutter", namespace: "tommysqueak", author: "Tom Philip") {
+  definition(name: "Qubino Flush Shutter", namespace: "tommysqueak", author: "Tom Philip", ocfDeviceType: "oic.d.blind") {
     capability "Actuator"
     capability "Sensor"
+		capability "Health Check"
+
     capability "Window Shade"
     capability "Switch Level"
     capability "Switch"
@@ -333,6 +335,9 @@ def configure() {
   sendEvent(name: "customLevel2Display", value: (customLevel2 ?: 50), displayed: false)
   sendEvent(name: "customLevel3Display", value: (customLevel3 ?: 75), displayed: false)
 
+  sendEvent(name: "checkInterval", value: 2 * 60 * 60, displayed: false, data: [protocol: "zwave", hubHardwareId: device.hub.hardwareID])
+	sendEvent(name: "supportedWindowShadeCommands", value: ["open", "close", "pause"])
+      
   delayBetween([
     //	Turn off energy reporting - by wattage (40) and by time (42), as it's not useful info.
     zwave.configurationV1.configurationSet(parameterNumber: 40, size: 1, scaledConfigurationValue: 0).format(),

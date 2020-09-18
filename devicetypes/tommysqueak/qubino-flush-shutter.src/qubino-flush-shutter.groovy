@@ -165,7 +165,7 @@ def storeState(level) {
     result << createEvent(name: "positionalState", value: "open", displayed: false)
     log.debug "Reported state is open; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
   } else {
-    result << createEvent(name: "switch", value: "default")
+    result << createEvent(name: "switch", value: "default", displayed: false)
     //	TODO: small problem with this. If we're 'opening' and then call close() this will record that we're 'partially open' instead of 'closing'
     //	as we receive this event about 2 seconds after calling close()
     result << createEvent(name: "windowShade", value: "partially open")

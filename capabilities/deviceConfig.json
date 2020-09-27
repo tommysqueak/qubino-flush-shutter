@@ -1,0 +1,108 @@
+{
+    "type": "dth",
+    "iconUrl": null,
+    "dashboard": {
+        "states": [
+            {
+                "component": "main",
+                "capability": "windowShade",
+                "version": 1,
+                "values": [],
+                "patch": [],
+                "visibleCondition": null
+            }
+        ],
+        "actions": [
+            {
+                "component": "main",
+                "capability": "windowShade",
+                "version": 1,
+                "values": [],
+                "patch": [],
+                "visibleCondition": null
+            }
+        ]
+    },
+    "detailView": [
+        {
+            "component": "main",
+            "capability": "windowShade",
+            "version": 1,
+            "values": [],
+            "patch": [],
+            "visibleCondition": null
+        },
+        {
+            "component": "main",
+            "capability": "switchLevel",
+            "version": 1,
+            "values": [],
+            "patch": [],
+            "visibleCondition": null
+        },
+        {
+            "component": "main",
+            "capability": "refresh",
+            "version": 1,
+            "values": [],
+            "patch": [],
+            "visibleCondition": null
+        },
+        {
+            "component": "main",
+            "capability": "healthCheck",
+            "version": 1,
+            "values": [],
+            "patch": [],
+            "visibleCondition": null
+        },
+        {
+            "component": "main",
+            "capability": "brookfuture40348.customLevels",
+            "version": 1,
+            "values": [],
+            "patch": [],
+            "visibleCondition": null
+        }
+    ],
+    "automation": {
+        "conditions": [
+            {
+                "component": "main",
+                "capability": "windowShade",
+                "version": 1,
+                "values": [],
+                "patch": [],
+                "visibleCondition": null
+            },
+            {
+                "component": "main",
+                "capability": "switchLevel",
+                "version": 1,
+                "values": [],
+                "patch": [],
+                "visibleCondition": null
+            },
+        ],
+        "actions": [
+            {
+                "component": "main",
+                "capability": "windowShade",
+                "version": 1,
+                "values": [],
+                "patch": [],
+                "visibleCondition": null
+            },
+            {
+                "component": "main",
+                "capability": "switchLevel",
+                "version": 1,
+                "values": [],
+                "patch": [],
+                "visibleCondition": null
+            }
+        ]
+    },
+    "vid": "2ce078f8-dffb-3eeb-be25-cdb618c9fe75",
+    "mnmn": "SmartThingsCommunity"
+}

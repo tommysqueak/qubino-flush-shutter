@@ -1,0 +1,59 @@
+{
+  "dashboard": {
+    "states": [],
+    "actions": [],
+    "basicPlus": []
+  },
+  "detailView": [
+    {
+      "label": "Custom Levels",
+      "displayType": "slider",
+      "slider": {
+        "range": [
+          0,
+          100
+        ],
+        "step": 10,
+        "command": "setLevel",
+        "unit": "level.unit",
+        "value": "level.value"
+      }
+    }
+  ],
+  "automation": {
+    "conditions": [
+      {
+        "label": "Custom Levels",
+        "displayType": "slider",
+        "slider": {
+          "range": [
+            0,
+            100
+          ],
+          "step": 1,
+          "command": "setLevel",
+          "unit": "level.unit",
+          "value": "level.value"
+        }
+      }
+    ],
+    "actions": [
+      {
+        "label": "Custom Levels",
+        "displayType": "slider",
+        "slider": {
+          "range": [
+            0,
+            100
+          ],
+          "step": 1,
+          "command": "setLevel",
+          "unit": "level.unit",
+          "value": "level.value"
+        }
+      }
+    ]
+  },
+  "id": "brookfuture40348.customLevels",
+  "version": 1
+}

@@ -22,38 +22,34 @@
 //  https://github.com/kjamsek/SmartThings/blob/master/DeviceHandlers/Qubino/FlushShutter/QubinoFlushShutterDeviceHandler.groovy
 
 metadata {
-  definition(name: "Qubino Flush Shutter", namespace: "tommysqueak", author: "Tom Philip", ocfDeviceType: "oic.d.blind") {
-    capability "Actuator"
-    capability "Sensor"
-		capability "Health Check"
+  definition(name: "Qubino Flush Shutter v3", namespace: "tommysqueak", author: "Tom Philip", ocfDeviceType: "oic.d.blind", mcdSync: true, runLocally: true) {
+    capability "Window Shade" // windowShade + close, open, presetPosition
+    capability "Switch Level" // level + setLevel(level, rate)
 
-    capability "Window Shade"
-    capability "Switch Level"
-    capability "Switch"
+    //capability "Actuator"
+    //capability "Sensor"
+    capability "Health Check"
+
     capability "Refresh"
-
     capability "Configuration" // and updated() which get called each time the device is updated (incl. device handler)
-
-    //	TODO, do we care about these?
-    //capability "Power Meter"
-    //capability "Energy Meter"
 
     //	Secure inclusion. How? Does the Software version of qubino support it?
 
-    command "presetPosition"
-    command "pause"
-    command "unpause"
-    command "calibrate"
-    command "uncalibrate"
+    capability "brookfuture40348.customLevels"
 
-    command "setCustomLevel1"
-    command "setCustomLevel2"
-    command "setCustomLevel3"
+    //command "pause"
+    //command "unpause"
+    //command "calibrate"
+    //command "uncalibrate"
 
-    attribute "positionalState", "string"
-    attribute "customLevel1Display", "number"
-    attribute "customLevel2Display", "number"
-    attribute "customLevel3Display", "number"
+    //command "setCustomLevel1"
+    //command "setCustomLevel2"
+    //command "setCustomLevel3"
+
+    //attribute "positionalState", "string"
+    //attribute "customLevel1Display", "number"
+    //attribute "customLevel2Display", "number"
+    //attribute "customLevel3Display", "number"
 
 
     fingerprint mfr:"0159", prod:"0003", model:"0052"  //Manufacturer Information value for Qubino Flush Shutter
@@ -94,28 +90,9 @@ metadata {
     standardTile("slats", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
       state "default", label: 'preset - slats', action: "presetPosition", icon: "st.Kids.kids15"
     }
-    standardTile("custom1", "device.customLevel1Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel1", icon: "st.Kids.kids15"
-    }
-    standardTile("custom2", "device.customLevel2Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel2", icon: "st.Kids.kids15"
-    }
-    standardTile("custom3", "device.customLevel3Display", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'preset - ${currentValue}%', action: "setCustomLevel3", icon: "st.Kids.kids15"
-    }
-
-    standardTile("refresh", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: '', action: "refresh", icon: "st.secondary.refresh"
-    }
-    standardTile("calibrate", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: 'calibrate', action: "calibrate", icon: "st.motion.acceleration.active"
-    }
-    standardTile("uncalibrate", "device.windowShade", height: 2, width: 2, inactiveLabel: false, decoration: "flat") {
-      state "default", label: '', action: "uncalibrate", icon: "st.people.people10"
-    }
 
     main "toggle"
-    details(["toggle", "slats", "custom1", "custom2", "custom3", "refresh", "calibrate"])
+    details(["toggle", "slats"])
   }
 
   preferences {
@@ -154,31 +131,26 @@ def storeState(level) {
   log.trace "SwitchMultilevelReport cmd.value:  ${level}"
 
   if (level == 0) {
-    result << createEvent(name: "switch", value: "off", displayed: false)
     result << createEvent(name: "windowShade", value: "closed")
-    result << createEvent(name: "positionalState", value: "closed", displayed: false)
-    log.debug "Reported state is closed; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
+    //result << createEvent(name: "positionalState", value: "closed", displayed: false)
   } else if (level > 98) {
     //	normally only opens to 99%, so make/fudge it 100%
     //  TODO: put up a recalibrate notice
     level = 100
-    result << createEvent(name: "switch", value: "on", displayed: false)
     result << createEvent(name: "windowShade", value: "open")
-    result << createEvent(name: "positionalState", value: "open", displayed: false)
+    //result << createEvent(name: "positionalState", value: "open", displayed: false)
     log.debug "Reported state is open; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
   } else {
-    result << createEvent(name: "switch", value: "default", displayed: false)
     //	TODO: small problem with this. If we're 'opening' and then call close() this will record that we're 'partially open' instead of 'closing'
     //	as we receive this event about 2 seconds after calling close()
     result << createEvent(name: "windowShade", value: "partially open")
-    log.debug "Reported state is neither open or closed; device is ${device.latestValue('switch')}  ${device.latestValue('level')} "
 
     def currentLevel = currentDouble("level")
     if (level > currentLevel) {
-      result << createEvent(name: "positionalState", value: "partially open - opening", displayed: false)
+      //result << createEvent(name: "positionalState", value: "partially open - opening", displayed: false)
     }
     else {
-      result << createEvent(name: "positionalState", value: "partially open - closing", displayed: false)
+      //result << createEvent(name: "positionalState", value: "partially open - closing", displayed: false)
     }
   }
   result << createEvent(name: "level", value: level, unit: "%")
@@ -195,6 +167,10 @@ def zwaveEvent(physicalgraph.zwave.Command cmd) {
 // ************
 // * COMMANDS *
 // ************
+
+def ping() {
+	refresh()
+}
 
 def refresh() {
   log.trace "refresh()"
@@ -220,40 +196,29 @@ def pause() {
 
 def unpause() {
   //	Before it was paused, what positionalState was it going in?
-  def whereItsAt = device.currentValue("positionalState")
+  //def whereItsAt = device.currentValue("positionalState")
 
   // closed, opening, partially open - opening
   // closing, open, partially open, unknown, partially open - closing
 
-  if(whereItsAt == "opening" || whereItsAt == "closed" || whereItsAt == "partially open - opening") {
-    open()
-  }
-  else {
-    close()
-  }
+  //if(whereItsAt == "opening" || whereItsAt == "closed" || whereItsAt == "partially open - opening") {
+  //  open()
+  //}
+  //else {
+  //  close()
+  //}
 }
 
-def setCustomLevel1() {
+def customLevelOnePosition() {
   setLevel(customLevel1 ?: 25)
 }
 
-def setCustomLevel2() {
+def customLevelTwoPosition() {
   setLevel(customLevel2 ?: 50)
 }
 
-def setCustomLevel3() {
+def customLevelThreePosition() {
   setLevel(customLevel3 ?: 75)
-}
-
-//
-//	Commands for capability: Switch
-//
-def on() {
-  open()
-}
-
-def off() {
-  close()
 }
 
 //
@@ -298,11 +263,11 @@ def setLevel(level) {
     if (level > currentLevel) {
       log.trace "windowShade: opening"
       sendEvent(name: "windowShade", value: "opening")
-      sendEvent(name: "positionalState", value: "opening", displayed: false)
+      //sendEvent(name: "positionalState", value: "opening", displayed: false)
     } else if (level < currentLevel) {
       log.trace "windowShade: closing"
       sendEvent(name: "windowShade", value: "closing")
-      sendEvent(name: "positionalState", value: "closing", displayed: false)
+      //sendEvent(name: "positionalState", value: "closing", displayed: false)
     }
 
     if (level >= 98) {
@@ -336,8 +301,8 @@ def configure() {
   sendEvent(name: "customLevel3Display", value: (customLevel3 ?: 75), displayed: false)
 
   sendEvent(name: "checkInterval", value: 2 * 60 * 60, displayed: false, data: [protocol: "zwave", hubHardwareId: device.hub.hardwareID])
-	sendEvent(name: "supportedWindowShadeCommands", value: ["open", "close", "pause"])
-      
+	sendEvent(name: "supportedWindowShadeCommands", value: ["open", "close", "pause"], displayed: false)
+
   delayBetween([
     //	Turn off energy reporting - by wattage (40) and by time (42), as it's not useful info.
     zwave.configurationV1.configurationSet(parameterNumber: 40, size: 1, scaledConfigurationValue: 0).format(),

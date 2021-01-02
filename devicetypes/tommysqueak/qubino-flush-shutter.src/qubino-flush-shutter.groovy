@@ -302,7 +302,7 @@ def configure() {
   sendEvent(name: "customLevel2Display", value: (customLevel2 ?: 50), displayed: false)
   sendEvent(name: "customLevel3Display", value: (customLevel3 ?: 75), displayed: false)
 
-  sendEvent(name: "checkInterval", value: 2 * 60 * 60, displayed: false, data: [protocol: "zwave", hubHardwareId: device.hub.hardwareID])
+  sendEvent(name: "checkInterval", value: 30 * 60, displayed: false, data: [protocol: "zwave", hubHardwareId: device.hub.hardwareID])
   sendEvent(name: "supportedWindowShadeCommands", value: ["open", "close", "pause"], displayed: false)
 
   delayBetween([

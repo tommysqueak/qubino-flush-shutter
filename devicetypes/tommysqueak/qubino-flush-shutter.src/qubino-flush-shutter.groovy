@@ -277,6 +277,8 @@ def setLevel(level) {
     } else {
       zwave.switchMultilevelV3.switchMultilevelSet(value: level, dimmingDuration: 0x00).format()
     }
+
+    runIn(15, "refresh", [overwrite: true])
   }
   else {
     log.trace "Uh oh: level is null :/"
@@ -301,7 +303,7 @@ def configure() {
   sendEvent(name: "customLevel3Display", value: (customLevel3 ?: 75), displayed: false)
 
   sendEvent(name: "checkInterval", value: 2 * 60 * 60, displayed: false, data: [protocol: "zwave", hubHardwareId: device.hub.hardwareID])
-	sendEvent(name: "supportedWindowShadeCommands", value: ["open", "close", "pause"], displayed: false)
+  sendEvent(name: "supportedWindowShadeCommands", value: ["open", "close", "pause"], displayed: false)
 
   delayBetween([
     //	Turn off energy reporting - by wattage (40) and by time (42), as it's not useful info.
